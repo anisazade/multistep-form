@@ -1,0 +1,129 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form{
+    display: flex;
+    padding: 1.5em;
+    background-color: var(--color-white);
+    border-radius: 1rem;
+    margin-inline: auto;
+    min-height: 70vh;
+}
+
+.form_description{
+    font-size: var(--font-size-300);
+    color: var(--color-grey-500);
+}
+
+.form__main{
+    display: flex;
+    flex-direction: column; 
+    padding: 1.5em 6em;
+    
+    label{
+        font-size: var(--font-size-300);
+    }   
+}
+
+.control-box{
+    position: relative;
+}
+
+.marker-required:has(+ .input--text:user-invalid)::before{
+    content: "This field is required";
+    color: var(--color-red-500);
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.input--text:user-invalid{
+    border: 1px solid var(--color-red-500)
+}
+
+.form__buttons{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    margin-block-start: auto;
+}
+
+.form-sidebar{
+    background-image: url(/bg-sidebar-desktop.svg);
+    background-size: cover;
+    padding: 3em;
+    padding-inline-end: 7em;
+    color: var(--color-white);
+    flex: max-content 1 0;
+    min-width: 16rem;
+    border-radius: .5rem;
+    text-transform: uppercase;
+    list-style: none;
+    
+    .step{
+        display: flex;
+        align-items: center;
+        gap: 1em;
+    }
+
+    .step__marker{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1/1;
+        height: 2.5em;
+        border: 1px solid currentColor;
+        border-radius: 5rem;
+    }
+
+    .step__heading{
+        display: flex;
+        flex-direction: column;
+
+        & > span:nth-child(1){
+            color: var(--color-grey-500);
+            font-size: var(--font-size-300);
+        }
+        
+        & > span:nth-child(2){
+            font-weight: 500;
+        }
+        
+    }
+
+    .step.active{
+        .step__marker{
+            background-color: var(--color-blue-200);
+            color: var(--color-blue-950);
+        }
+    }
+}
+
+.button-dark{
+    background-color: var(--color-blue-950);
+    color: var(--color-white);
+    
+    &:active{
+        background-color: var(--color-blue-800);
+        
+    }
+}
+
+.button-white{
+    background-color: var(---color-white);
+    color: var(--color-grey-500);
+    
+    &:active{
+        color: var(--color-blue-950);
+    }
+}
+
+.button-light{
+    background-color: var(--color-purple-600);
+    color: var(--color-white);
+}
+
+
