@@ -34,10 +34,15 @@ form{
 
 .marker-required:has(+ .input--text:user-invalid)::before{
     content: "This field is required";
+    font-size: var(--font-size-300);
     color: var(--color-red-500);
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.marker-required:has(+ .input--text[data-invalid-type="typemissmatch"]:user-invalid)::before{
+    content: "This input is invalid";
 }
 
 .input--text:user-invalid{
@@ -98,6 +103,7 @@ form{
         .step__marker{
             background-color: var(--color-blue-200);
             color: var(--color-blue-950);
+            border-color: var(--color-blue-300);
         }
     }
 }
