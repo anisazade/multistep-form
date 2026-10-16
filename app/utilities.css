@@ -8,6 +8,11 @@
     justify-content: center;
 }
 
+.flex-300{
+    display: flex;
+    gap: var(--space-300);
+}
+
 .stack-200{
     /* exclude adding margin to stretched links*/
     & > *:not(.stretched-link) + *:not(.stretched-link){

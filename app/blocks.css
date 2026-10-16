@@ -16,13 +16,13 @@ form{
 .form_description{
     font-size: var(--font-size-300);
     color: var(--color-grey-500);
+    min-width: 50ch;
 }
 
 .form__main{
     display: flex;
     flex-direction: column; 
-    padding: 1.5em 6em;
-    
+    padding: 2em 6em 1em 6em;
     label{
         font-size: var(--font-size-300);
     }   
@@ -32,7 +32,7 @@ form{
     position: relative;
 }
 
-.marker-required:has(+ .input--text:user-invalid)::before{
+.validation-message:has(+ .input--text:user-invalid)::before{
     content: "This field is required";
     font-size: var(--font-size-300);
     color: var(--color-red-500);
@@ -41,13 +41,81 @@ form{
     right: 0;
 }
 
-.marker-required:has(+ .input--text[data-invalid-type="typemissmatch"]:user-invalid)::before{
+.validation-message:has(+ .input--text[data-invalid-type="typemissmatch"]:user-invalid)::before{
     content: "This input is invalid";
 }
 
-.input--text:user-invalid{
-    border: 1px solid var(--color-red-500)
+.input--text{
+    padding: 1em 1em;
+    border-radius: .5rem;
+    border: 1px solid var(--color-purple-200);
+    outline-color: var(--color-purple-600);
+    transition: .2s;
+    width: 100%;
+    
+    &:hover{
+        border: 1px solid var(--color-purple-600);
+    }        
+
+    &:user-invalid{
+        border: 1px solid var(--color-red-500)
+    }
 }
+
+.radio-box{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    padding: 1em 0px 1em 1em;
+    gap: var(--space-500);
+    > *{
+        z-index: 1;
+    }
+    input{
+        border: 1px solid var(--color-purple-200);
+        outline-width: 1px;
+        outline-color: var(--color-purple-600);
+        border-radius: 10px;
+        appearance: none;
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        transition: .2s;
+        &:hover{
+            border-color: var(--color-purple-600);
+        }
+        &:checked{
+            border-color: var(--color-purple-600);
+            background-color: var(--color-blue-100);
+        }
+    }
+    label{
+        span:first-child{
+            display: block;
+            font-weight: 700;
+            margin-block-end: 4px;
+        }
+        span:nth-child(2){
+            display: block;
+            color: var(--color-grey-500);
+        }
+    }
+}
+
+.switch-box{
+    width: 100%;
+    background-color: var(--color-blue-100);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-300);
+    padding-block: 1em;
+    border-radius: 10px;
+    label{
+        font-weight: 700;
+    }
+}
+
 
 .form__buttons{
     display: flex;
@@ -59,11 +127,10 @@ form{
 .form-sidebar{
     background-image: url(/bg-sidebar-desktop.svg);
     background-size: cover;
-    padding: 3em;
+    padding: 2.4em 3em 0em 3em;
     padding-inline-end: 7em;
     color: var(--color-white);
-    flex: max-content 1 0;
-    min-width: 16rem;
+    flex:1 0;
     border-radius: .5rem;
     text-transform: uppercase;
     list-style: none;
@@ -87,7 +154,8 @@ form{
     .step__heading{
         display: flex;
         flex-direction: column;
-
+        white-space: nowrap;
+        
         & > span:nth-child(1){
             color: var(--color-grey-500);
             font-size: var(--font-size-300);
@@ -111,11 +179,16 @@ form{
 .button-dark{
     background-color: var(--color-blue-950);
     color: var(--color-white);
-    
+
     &:active{
         background-color: var(--color-blue-800);
         
     }
+
+    &:focus-visible{
+        outline-offset: 3px;
+    }
+
 }
 
 .button-white{
