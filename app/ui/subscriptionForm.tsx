@@ -293,31 +293,44 @@ function Form_2({
                 </div>
             </div>
             <div className="switch-box">
-                <label htmlFor="monthly-billing">Monthly</label>
-                <input
-                    type="radio"
-                    name="billing"
-                    value="monthly"
-                    id="monthly-billing"
-                    checked={billing === 'monthly'}
-                    onChange={(event) => {
-                        onChange({ billing: event.target.value });
-                    }}
-                    required
-                />
-
-                <input
-                    type="radio"
-                    name="billing"
-                    id="yearly-billing"
-                    value="yearly"
-                    checked={billing === 'yearly'}
-                    onChange={(event) => {
-                        onChange({ billing: event.target.value });
-                    }}
-                    required
-                />
-                <label htmlFor="yearly-billing">Yearly</label>
+                <label htmlFor="monthly-billing" data-switch-mode={(billing === "monthly")? "on" : "off"}>Monthly</label>
+                <div className="switch-key">
+                    <div
+                        className="overlay"
+                        onClick={() => {
+                            if (billing === 'monthly') {
+                                onChange({ billing: 'yearly' });
+                            } else {
+                                onChange({ billing: 'monthly' });
+                            }
+                        }}
+                    ></div>
+                    <input
+                        type="radio"
+                        name="billing"
+                        value="monthly"
+                        id="monthly-billing"
+                        data-switch-mode="left"
+                        checked={billing === 'monthly'}
+                        onChange={(event) => {
+                            onChange({ billing: event.target.value });
+                        }}
+                        required
+                        />
+                    <input
+                        type="radio"
+                        name="billing"
+                        id="yearly-billing"
+                        value="yearly"
+                        data-switch-mode="right"
+                        checked={billing === 'yearly'}
+                        onChange={(event) => {
+                            onChange({ billing: event.target.value });
+                        }}
+                        required
+                    />
+                </div>
+                <label htmlFor="yearly-billing" data-switch-mode={(billing === "yearly")? "on" : "off"}>Yearly</label>
             </div>
         </div>
     );

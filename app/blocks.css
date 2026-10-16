@@ -108,14 +108,61 @@ form{
     background-color: var(--color-blue-100);
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: var(--space-300);
     padding-block: 1em;
     border-radius: 10px;
+    
     label{
         font-weight: 700;
+        &[data-switch-mode="off"]{
+            color: var(--color-grey-500);
+        }
     }
 }
 
+.switch-key{
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+    width: 2.5rem;
+    border-radius: 15px;
+    background-color: var(--color-blue-950);
+    cursor: pointer;
+    position: relative;
+    
+    .overlay{
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+    }
+
+    input{
+        z-index: 1;
+        appearance: none;
+        width: .8rem;
+        height: .8rem;
+        border-radius: 500px;
+        background-color: var(--color-white);
+        opacity: 0;
+        transition: transform .2s;
+        &:checked{
+            opacity: 1;
+        }
+        &[data-switch-mode="left"]{
+            transform: translateX(100%);
+            &:checked{
+                transform: translateX(0);
+            }
+        }
+        &[data-switch-mode="right"]{
+            transform: translateX(-100%);
+            &:checked{
+                transform: translateX(0);
+            }
+        }
+    }
+}
 
 .form__buttons{
     display: flex;
