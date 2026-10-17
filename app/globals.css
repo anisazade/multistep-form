@@ -56,5 +56,6 @@ button{
     padding: 1em 1.5em;
     cursor: pointer;
     transition: .1s;
+    font-weight: 500;
 }
 
