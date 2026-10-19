@@ -4,22 +4,70 @@ import Image from 'next/image';
 import { useRef, useState } from 'react';
 import Sidebar from '@/app/ui/sidebar';
 
+const plans = [
+    {
+        title: 'arcade',
+        price: {
+            monthly: 9,
+            yearly: 90,
+        },
+    },
+    {
+        title: 'advanced',
+        price: {
+            monthly: 12,
+            yearly: 120,
+        },
+    },
+    {
+        title: 'pro',
+        price: {
+            monthly: 15,
+            yearly: 150,
+        },
+    },
+] as const;
+const addones = [
+    {
+        title: 'online service',
+        description: 'Access to multiplayer games',
+        price: {
+            monthly: 1,
+            yearly: 10,
+        },
+    },
+    {
+        title: 'larger storage',
+        description: 'Extra 1TB of cloud save',
+        price: {
+            monthly: 2,
+            yearly: 20,
+        },
+    },
+    {
+        title: 'customizable profile',
+        description: 'Custom theme on your profile',
+        price: {
+            monthly: 2,
+            yearly: 20,
+        },
+    },
+] as const;
+
+type billingType = 'yearly' | 'monthly';
+type planType = (typeof plans)[number]['title'];
+type addonesType = (typeof addones)[number]['title'];
+
+type addonesFormType = Record<(typeof addones)[number]['title'], boolean>;
+
 interface formDataType {
     name: string;
     email: string;
     phone_number: string;
     plan: planType;
     billing: billingType;
-    addones: addonesType;
+    addones: addonesFormType;
 }
-interface addonesType {
-    online_services: boolean;
-    large_storage: boolean;
-    custom_profile: boolean;
-}
-type addonesprop = 'online_services' | 'large_storage' | 'custom_profile';
-type billingType = 'yearly' | 'monthly';
-type planType = 'arcade' | 'advanced' | 'pro';
 
 export default function SubscriptionForm() {
     const [step, setStep] = useState(1);
@@ -31,9 +79,9 @@ export default function SubscriptionForm() {
         plan: 'arcade',
         billing: 'monthly',
         addones: {
-            online_services: true,
-            large_storage: true,
-            custom_profile: false,
+            [addones[0].title]: true,
+            [addones[1].title]: true,
+            [addones[2].title]: false,
         },
     });
 
@@ -45,8 +93,12 @@ export default function SubscriptionForm() {
         setData({ ...form_data, [data_name]: data_value });
     }
 
-    function setForm3(data_name: addonesprop, data_value: boolean) {
+    function setForm3(data_name: addonesType, data_value: boolean) {
         setData({ ...form_data, addones: { ...form_data.addones, [data_name]: data_value } });
+    }
+
+    function goToStep2(){
+        setStep(2);
     }
 
     return (
@@ -77,7 +129,7 @@ export default function SubscriptionForm() {
 
                     {step === 2 && (
                         <Form_2
-                            plan={form_data.plan}
+                            selected_plan={form_data.plan}
                             billing={form_data.billing}
                             onChange={setForm2}
                         />
@@ -87,7 +139,16 @@ export default function SubscriptionForm() {
                         <Form_3
                             billing={form_data.billing}
                             onChange={setForm3}
-                            addones={form_data.addones}
+                            addones_value={form_data.addones}
+                        />
+                    )}
+
+                    {step === 4 && (
+                        <Form_4
+                            billing={form_data.billing}
+                            selected_plan={form_data.plan}
+                            addones_value={form_data.addones}
+                            onClick={goToStep2}
                         />
                     )}
 
@@ -216,27 +277,15 @@ function Form_1({
 }
 
 function Form_2({
-    plan,
+    selected_plan,
     billing,
     onChange,
 }: {
-    plan: planType;
+    selected_plan: planType;
     billing: billingType;
     onChange: (data_name: 'plan' | 'billing', data_value: planType | billingType) => void;
 }) {
-    const prices =
-        billing === 'monthly'
-            ? {
-                  arcade: '$9/mo',
-                  advanced: '$12/mo',
-                  pro: '$15/mo',
-              }
-            : {
-                  arcade: '$90/yr',
-                  advanced: '$120/yr',
-                  pro: '$150/yr',
-              };
-
+    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
     return (
         <div className="stack-400">
             <div className="stack-200">
@@ -246,60 +295,28 @@ function Form_2({
                 </p>
             </div>
             <div className="flex-300">
-                <div className="radio-box">
-                    <Image src="/icon-arcade.svg" height={40} width={40} alt="" />
-                    <label htmlFor="radio-1">
-                        <span className="heading-primary">Arcade</span>
-                        <span className="heading-secondary">{prices.arcade}</span>
-                    </label>
-                    <input
-                        id="radio-1"
-                        type="radio"
-                        name="plan-type"
-                        value="arcade"
-                        checked={plan === 'arcade'}
-                        onChange={(event) => {
-                            onChange('plan', event.target.value as planType);
-                        }}
-                        required
-                    />
-                </div>
-                <div className="radio-box">
-                    <Image src="/icon-advanced.svg" height={40} width={40} alt="" />
-                    <label htmlFor="radio-2">
-                        <span className="heading-primary">Advanced</span>
-                        <span className="heading-secondary">{prices.advanced}</span>
-                    </label>
-                    <input
-                        id="radio-2"
-                        type="radio"
-                        name="plan-type"
-                        value="advanced"
-                        checked={plan === 'advanced'}
-                        onChange={(event) => {
-                            onChange('plan', event.target.value as planType);
-                        }}
-                        required
-                    />
-                </div>
-                <div className="radio-box">
-                    <Image src="/icon-pro.svg" height={40} width={40} alt="" />
-                    <label htmlFor="radio-3">
-                        <span className="heading-primary">Pro</span>
-                        <span className="heading-secondary">{prices.pro}</span>
-                    </label>
-                    <input
-                        id="radio-3"
-                        type="radio"
-                        name="plan-type"
-                        value="pro"
-                        checked={plan === 'pro'}
-                        onChange={(event) => {
-                            onChange('plan', event.target.value as planType);
-                        }}
-                        required
-                    />
-                </div>
+                {plans.map((plan,i) => {
+                    return (
+                        <div key={plan.title} className="radio-box">
+                            <Image src={`/icon-${plan.title}.svg`} height={40} width={40} alt="" />
+                            <label htmlFor={`radio-1${i}`}>
+                                <span className="heading-primary">{plan.title}</span>
+                                <span className="heading-secondary">{`${plan.price[billing]}${price_postfix}`}</span>
+                            </label>
+                            <input
+                                id={`radio-1${i}`}
+                                type="radio"
+                                name="plan-type"
+                                value={plan.title}
+                                checked={selected_plan === plan.title}
+                                onChange={(event) => {
+                                    onChange('plan', event.target.value as planType);
+                                }}
+                                required
+                            />
+                        </div>
+                    );
+                })}
             </div>
             <div className="switch-box">
                 <label
@@ -356,27 +373,15 @@ function Form_2({
 }
 
 function Form_3({
-    addones,
+    addones_value,
     billing,
     onChange,
 }: {
-    addones: addonesType;
+    addones_value: addonesFormType;
     billing: billingType;
-    onChange: (prop: addonesprop, value: boolean) => void;
+    onChange: (prop: addonesType, value: boolean) => void;
 }) {
-    const prices =
-        billing === 'monthly'
-            ? {
-                  online_service: '+$1/mo',
-                  large_storage: '+$2/mo',
-                  custom_profile: '+$2/mo',
-              }
-            : {
-                  online_service: '+$10/yr',
-                  large_storage: '+$20/yr',
-                  custom_profile: '+$20/yr',
-              };
-
+    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
     return (
         <div className="stack-400">
             <div className="stack-200">
@@ -384,63 +389,82 @@ function Form_3({
                 <p className="form_description">Add-ones help enhance your gaming experience.</p>
             </div>
             <div className="stack-300">
-                <div className="checkbox">
-                    <input
-                        id="checkbox-1"
-                        name="add-ones"
-                        value="online_services"
-                        type="checkbox"
-                        checked={addones.online_services}
-                        onChange={(event) => {
-                            onChange(event.target.value as addonesprop, event.target.checked);
-                        }}
-                    />
-                    <label htmlFor="checkbox-1">
-                        <div>
-                            <span className="heading-primary">Online service</span>
-                            <span className="heading-secondary">Access to multiplayer games</span>
+                {addones.map((addone, i) => {
+                    return (
+                        <div key={addone.title} className="checkbox">
+                            <input
+                                id={`checkbox-${i}`}
+                                name="add-ones"
+                                value={addone.title}
+                                type="checkbox"
+                                checked={addones_value[addone.title]}
+                                onChange={(event) => {
+                                    onChange(
+                                        event.target.value as addonesType,
+                                        event.target.checked,
+                                    );
+                                }}
+                            />
+                            <label htmlFor={`checkbox-${i}`}>
+                                <span className="heading-primary">{addone.title}</span>
+                                <span className="heading-thirdnary">{`+${addone.price[billing]}${price_postfix}`}</span>
+                                <span className="heading-secondary">{addone.description}</span>
+                            </label>
                         </div>
-                        <span className="heading-thirdnary">{prices.online_service}</span>
-                    </label>
-                </div>
-                <div className="checkbox">
-                    <input
-                        id="checkbox-2"
-                        name="add-ones"
-                        value="large_storage"
-                        checked={addones.large_storage}
-                        onChange={(event) => {
-                            onChange(event.target.value as addonesprop, event.target.checked);
-                        }}
-                        type="checkbox"
-                    />
-                    <label htmlFor="checkbox-2">
-                        <div>
-                            <span className="heading-primary">Larger storage</span>
-                            <span className="heading-secondary">Extra 1TB of cloud save</span>
-                        </div>
-                        <span className="heading-thirdnary">{prices.large_storage}</span>
-                    </label>
-                </div>
-                <div className="checkbox">
-                    <input
-                        id="checkbox-3"
-                        name="add-ones"
-                        value="custom_profile"
-                        checked={addones.custom_profile}
-                        onChange={(event) => {
-                            onChange(event.target.value as addonesprop, event.target.checked);
-                        }}
-                        type="checkbox"
-                    />
-                    <label htmlFor="checkbox-3">
-                        <div>
-                            <span className="heading-primary">Customizable profile</span>
-                            <span className="heading-secondary">Custom theme on your profile</span>
-                        </div>
-                        <span className="heading-thirdnary">{prices.custom_profile}</span>
-                    </label>
-                </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+function Form_4({
+    selected_plan,
+    addones_value,
+    billing,
+    onClick,
+}: {
+    selected_plan: planType;
+    addones_value: addonesFormType;
+    billing: billingType;
+    onClick:()=>void;
+}) {
+    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
+    const selected_plan_price = plans.find(plan => plan.title === selected_plan)?.price[billing] as number;
+    let total_cost :number= selected_plan_price;
+    addones.forEach((addone) => {
+                    if (addones_value[addone.title]) {
+                        total_cost += addone.price[billing]
+                    }
+    });
+    return (
+        <div className="stack-400">
+            <div className="stack-200">
+                <h1>Finishing up</h1>
+                <p className="form_description">
+                    Double-check everything looks OK before confirming.
+                </p>
+            </div>
+            <ul className="order-list">
+                <li>
+                    <span className="heading-primary">{`${selected_plan} (${billing})`}</span>
+                    <span className="heading-primary">{`${selected_plan_price}${price_postfix}`}</span>
+                    <button className="button-text" onClick={()=>{onClick();}}>Change</button>
+                </li>
+                {addones.map((addone) => {
+                    if (addones_value[addone.title]) {
+                        return (
+                            <li key={addone.title}>
+                                <span className="heading-secondary">{addone.title}</span>
+                                <span className="font-300">{`+${addone.price[billing]}${price_postfix}`}</span>
+                            </li>
+                        );
+                    }
+                })}
+            </ul>
+            <div className="total-cost">
+                <span className="heading-secondary">{`Total (per ${billing.slice(0,-2)})`}</span>
+                <span className="heading-thirdnary">{`+${total_cost}${price_postfix}`}</span>
             </div>
         </div>
     );

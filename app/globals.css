@@ -1,7 +1,7 @@
 :root {
     /* primary */
-    --color-blue-950: hsl(213, 96%, 18%);
-    --color-blue-800:rgb(0, 54, 120);
+    --color-blue-950: lab(17.16% 8.92 -33.01);
+    --color-blue-800:hsl(213, 100%, 24%);
     --color-purple-600: hsl(243, 100%, 62%);
     --color-blue-300: hsl(228, 100%, 84%);
     --color-blue-200: hsl(206, 94%, 87%);
@@ -11,7 +11,7 @@
     --color-grey-500: hsl(231, 11%, 63%);
     --color-purple-200: hsl(229, 24%, 87%);
     --color-blue-100: hsl(218, 100%, 97%);
-    --color-blue-50: hsl(231, 100%, 99%);
+    --color-blue-50: hsl(230, 75%, 98%);
     --color-white: hsl(0, 100%, 100%);
 
     --space-200: clamp( .3rem, .7vw, .5rem);
@@ -19,7 +19,8 @@
     --space-400: clamp( 1.2rem, 1.7vw, 2.2rem);
     --space-500: clamp( 2rem, 2.5vw, 5rem);
 
-    --font-size-300: clamp(.5rem, 1.5vw, .95rem);
+    --font-size-300: clamp(.5rem, 1vw, .97rem);
+    --font-size-500: clamp(1.1rem, 1.3vw, 1.2rem);
 }
 
 html {

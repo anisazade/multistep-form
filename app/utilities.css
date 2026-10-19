@@ -8,6 +8,10 @@
     justify-content: center;
 }
 
+.font-300{
+    font-size: var(--font-size-300);
+}
+
 .flex-300{
     display: flex;
     gap: var(--space-300);

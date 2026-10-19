@@ -72,6 +72,10 @@ form{
     > *{
         z-index: 1;
     }
+    label{
+        display: flex;
+        flex-direction: column;
+    }
     input{
         border: 1px solid var(--color-purple-200);
         outline-width: 1px;
@@ -92,18 +96,20 @@ form{
     }
     
 }
-
 .heading-primary{
-    display: block;
-    font-weight: 700;
     line-height: 2;
+    font-weight: 500;
+    color: var(--color-blue-800);
+    text-transform: capitalize;
 }
 .heading-secondary{
-    display: block;
     color: var(--color-grey-500);
+    font-size: var(--font-size-300);
+    &::first-letter{
+        text-transform: capitalize;
+    }
 }
 .heading-thirdnary{
-    display: block;
     color: var(--color-purple-600);
 }
 
@@ -190,13 +196,52 @@ form{
         outline-color: var(--color-purple-600);
     }
     label{
-        display: flex;
         flex: 1;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        justify-items: start;
         align-items: center;
-        .heading-thirdnary{
-            margin-inline-start: auto;    
+        .heading-thirdnary{ 
+            grid-area: 1 / 2 / 3 / 3;
         }
+    }
+}
+
+.order-list{
+    background-color: var(--color-blue-50);
+    border-radius: 7px;
+    padding: .5em 1.5em;
+    & > li{
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        justify-items: start;
+        align-items: center;
+        padding-block: 0.5em;
+        > span:nth-child(2){
+            grid-area: 1 / 2 / span 2 / -1;
+        }
+        
+        &:first-child {
+            border-block-end: 1px solid var(--color-purple-200);
+            padding-block-end: 1.5em;
+            margin-block-end: .5em;
+            > span:nth-child(2){
+                text-transform: none;
+                font-weight: 700;
+            }            
+        }
+    }
+}
+
+.total-cost{
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    justify-items: start;
+    align-items: center;
+    padding-inline:1.5em;
+    >span:nth-child(2){
+        font-weight: 700;
+        font-size: var(--font-size-500);
     }
 }
 
@@ -288,4 +333,15 @@ form{
     color: var(--color-white);
 }
 
+.button-text{
+    background-color: transparent;
+    padding: 0;
+    text-decoration: underline;
+    font-size: var(--font-size-300);
+    color: var(--color-grey-500);
+    text-decoration-thickness: 2px;
+    &:active{
+        color: var(--color-purple-600);
+    }
+}
 
