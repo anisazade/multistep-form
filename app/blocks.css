@@ -16,7 +16,7 @@ form{
 .form_description{
     font-size: var(--font-size-300);
     color: var(--color-grey-500);
-    min-width: 50ch;
+    width: 50ch;
 }
 
 .form__main{
@@ -242,6 +242,21 @@ form{
     >span:nth-child(2){
         font-weight: 700;
         font-size: var(--font-size-500);
+    }
+}
+
+.thanks-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    gap: var(--space-300);
+    img{
+        margin-bottom: var(--space-300);
+    }
+    p{
+        text-align: center;
     }
 }
 

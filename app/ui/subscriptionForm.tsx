@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Sidebar from '@/app/ui/sidebar';
 
 const plans = [
@@ -54,6 +54,19 @@ const addones = [
     },
 ] as const;
 
+const initial_form_value: formDataType = {
+    name: '',
+    email: '',
+    phone_number: '',
+    plan: 'arcade',
+    billing: 'monthly',
+    addones: {
+        [addones[0].title]: true,
+        [addones[1].title]: true,
+        [addones[2].title]: false,
+    },
+};
+
 type billingType = 'yearly' | 'monthly';
 type planType = (typeof plans)[number]['title'];
 type addonesType = (typeof addones)[number]['title'];
@@ -72,18 +85,8 @@ interface formDataType {
 export default function SubscriptionForm() {
     const [step, setStep] = useState(1);
     const next_button = useRef(null);
-    const [form_data, setData] = useState<formDataType>({
-        name: '',
-        email: '',
-        phone_number: '',
-        plan: 'arcade',
-        billing: 'monthly',
-        addones: {
-            [addones[0].title]: true,
-            [addones[1].title]: true,
-            [addones[2].title]: false,
-        },
-    });
+    const confirm_button = useRef(null);
+    const [form_data, setData] = useState<formDataType>(initial_form_value);
 
     function setForm1(data_name: 'name' | 'email' | 'phone_number', data_value: string) {
         setData({ ...form_data, [data_name]: data_value });
@@ -97,9 +100,23 @@ export default function SubscriptionForm() {
         setData({ ...form_data, addones: { ...form_data.addones, [data_name]: data_value } });
     }
 
-    function goToStep2(){
+    function goToStep2() {
         setStep(2);
     }
+
+    useEffect(() => {
+        const session_form = sessionStorage.getItem('form_data');
+        const form_data_str = JSON.stringify(form_data);
+
+        // set session value if form value is updated by user
+        if (form_data !== initial_form_value) {
+            sessionStorage.setItem('form_data', form_data_str);
+        }
+        // if the session value exists and the form is on the initial state, set the form value
+        else if (session_form !== null && session_form !== '') {
+            setData(JSON.parse(session_form));
+        }
+    }, [form_data]);
 
     return (
         <>
@@ -112,6 +129,9 @@ export default function SubscriptionForm() {
                         event.nativeEvent.submitter === next_button.current
                     ) {
                         setStep(step + 1);
+                    } else if (event.nativeEvent.submitter === confirm_button.current) {
+                        setStep(5);
+                        setData(initial_form_value);
                     }
                     console.log(event.type);
                 }}
@@ -152,28 +172,49 @@ export default function SubscriptionForm() {
                         />
                     )}
 
-                    <div className="form__buttons">
-                        {step == 4 && <button className="button-light">Confirm</button>}
+                    {step === 5 ? (
+                        <div className='thanks-page'>
+                            <Image className='icon_big' src={`/icon-thank-you.svg`} height={80} width={80} alt="" />
+                            <h1>Thank You!</h1>
+                            <p className='form_description'>
+                                Thanks for confirming your subscription! We hope you have fun using
+                                our platform.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="form__buttons">
+                            {step == 4 && (
+                                <button
+                                    ref={confirm_button}
+                                    className="button-light"
+                                    onClick={() => {
+                                        sessionStorage.setItem('form_data', '');
+                                    }}
+                                >
+                                    Confirm
+                                </button>
+                            )}
 
-                        {step != 4 && (
-                            <button ref={next_button} className="button-dark">
-                                Next Step
-                            </button>
-                        )}
+                            {step != 4 && (
+                                <button ref={next_button} className="button-dark">
+                                    Next Step
+                                </button>
+                            )}
 
-                        {step != 1 && (
-                            <button
-                                className="button-white"
-                                type="button"
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    setStep(step - 1);
-                                }}
-                            >
-                                Go Back
-                            </button>
-                        )}
-                    </div>
+                            {step != 1 && (
+                                <button
+                                    className="button-white"
+                                    type="button"
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        setStep(step - 1);
+                                    }}
+                                >
+                                    Go Back
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
             </form>
         </>
@@ -285,7 +326,7 @@ function Form_2({
     billing: billingType;
     onChange: (data_name: 'plan' | 'billing', data_value: planType | billingType) => void;
 }) {
-    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
+    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
     return (
         <div className="stack-400">
             <div className="stack-200">
@@ -295,7 +336,7 @@ function Form_2({
                 </p>
             </div>
             <div className="flex-300">
-                {plans.map((plan,i) => {
+                {plans.map((plan, i) => {
                     return (
                         <div key={plan.title} className="radio-box">
                             <Image src={`/icon-${plan.title}.svg`} height={40} width={40} alt="" />
@@ -381,7 +422,7 @@ function Form_3({
     billing: billingType;
     onChange: (prop: addonesType, value: boolean) => void;
 }) {
-    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
+    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
     return (
         <div className="stack-400">
             <div className="stack-200">
@@ -427,15 +468,17 @@ function Form_4({
     selected_plan: planType;
     addones_value: addonesFormType;
     billing: billingType;
-    onClick:()=>void;
+    onClick: () => void;
 }) {
-    const price_postfix= `/${billing==="monthly"? 'mo' : 'yr'}`
-    const selected_plan_price = plans.find(plan => plan.title === selected_plan)?.price[billing] as number;
-    let total_cost :number= selected_plan_price;
+    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
+    const selected_plan_price = plans.find((plan) => plan.title === selected_plan)?.price[
+        billing
+    ] as number;
+    let total_cost: number = selected_plan_price;
     addones.forEach((addone) => {
-                    if (addones_value[addone.title]) {
-                        total_cost += addone.price[billing]
-                    }
+        if (addones_value[addone.title]) {
+            total_cost += addone.price[billing];
+        }
     });
     return (
         <div className="stack-400">
@@ -449,7 +492,14 @@ function Form_4({
                 <li>
                     <span className="heading-primary">{`${selected_plan} (${billing})`}</span>
                     <span className="heading-primary">{`${selected_plan_price}${price_postfix}`}</span>
-                    <button className="button-text" onClick={()=>{onClick();}}>Change</button>
+                    <button
+                        className="button-text"
+                        onClick={() => {
+                            onClick();
+                        }}
+                    >
+                        Change
+                    </button>
                 </li>
                 {addones.map((addone) => {
                     if (addones_value[addone.title]) {
@@ -463,7 +513,7 @@ function Form_4({
                 })}
             </ul>
             <div className="total-cost">
-                <span className="heading-secondary">{`Total (per ${billing.slice(0,-2)})`}</span>
+                <span className="heading-secondary">{`Total (per ${billing.slice(0, -2)})`}</span>
                 <span className="heading-thirdnary">{`+${total_cost}${price_postfix}`}</span>
             </div>
         </div>
