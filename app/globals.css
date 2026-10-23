@@ -19,8 +19,9 @@
     --space-400: clamp( 1.2rem, 1.7vw, 2.2rem);
     --space-500: clamp( 2rem, 2.5vw, 5rem);
 
-    --font-size-300: clamp(.5rem, 1vw, .97rem);
-    --font-size-500: clamp(1.1rem, 1.3vw, 1.2rem);
+    --font-size-300: clamp(0.875rem, 0.8rem + 0.25vw, 1rem);
+    --font-size-500: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    --font-size-600: clamp(1.5rem, 1.25rem + 1vw, 2rem);
 }
 
 html {
@@ -51,6 +52,10 @@ h1, h2, h3{
     white-space: nowrap;
 }
 
+h1{
+    font-size: var(--font-size-600) ;
+}
+
 button{
     border: none;
     border-radius: .5rem;
@@ -59,4 +64,3 @@ button{
     transition: .1s;
     font-weight: 500;
 }
-

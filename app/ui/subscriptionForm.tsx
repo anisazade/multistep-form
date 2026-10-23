@@ -4,6 +4,29 @@ import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 import Sidebar from '@/app/ui/sidebar';
 
+const form_info = [
+    {
+        title: 'Personal info',
+        description: 'Please provide your name, email address, and phone number.',
+    },
+    {
+        title: 'Select your plan',
+        description: 'You have the option of monthly or yearly billing.',
+    },
+    {
+        title: 'Pick add-ones',
+        description: 'Add-ones help enhance your gaming experience.',
+    },
+    {
+        title: 'Finishing up',
+        description: 'Double-check everything looks OK before confirming.',
+    },
+    {
+        title: 'Thank you!',
+        description:
+            'Thanks for confirming your subscription! We hope you have fun using our platform.',
+    },
+];
 const plans = [
     {
         title: 'arcade',
@@ -138,84 +161,86 @@ export default function SubscriptionForm() {
             >
                 <Sidebar active_step={step} />
                 <div className="form__main">
-                    {step === 1 && (
-                        <Form_1
-                            name={form_data.name}
-                            email={form_data.email}
-                            phone_number={form_data.phone_number}
-                            onChange={setForm1}
-                        />
-                    )}
-
-                    {step === 2 && (
-                        <Form_2
-                            selected_plan={form_data.plan}
-                            billing={form_data.billing}
-                            onChange={setForm2}
-                        />
-                    )}
-
-                    {step === 3 && (
-                        <Form_3
-                            billing={form_data.billing}
-                            onChange={setForm3}
-                            addones_value={form_data.addones}
-                        />
-                    )}
-
-                    {step === 4 && (
-                        <Form_4
-                            billing={form_data.billing}
-                            selected_plan={form_data.plan}
-                            addones_value={form_data.addones}
-                            onClick={goToStep2}
-                        />
-                    )}
-
-                    {step === 5 ? (
-                        <div className='thanks-page'>
-                            <Image className='icon_big' src={`/icon-thank-you.svg`} height={80} width={80} alt="" />
-                            <h1>Thank You!</h1>
-                            <p className='form_description'>
-                                Thanks for confirming your subscription! We hope you have fun using
-                                our platform.
-                            </p>
+                    <div className={step === 5 ? "thanks-page":"stack-400"}>
+                            {step === 5 && (
+                                <Image
+                                    className="icon_big"
+                                    src={`/icon-thank-you.svg`}
+                                    height={80}
+                                    width={80}
+                                    alt=""
+                                />
+                            )}
+                        <div className="stack-200">
+                            <h1>{form_info[step - 1].title}</h1>
+                            <p className="form_description">{form_info[step - 1].description}</p>
                         </div>
-                    ) : (
-                        <div className="form__buttons">
-                            {step == 4 && (
-                                <button
-                                    ref={confirm_button}
-                                    className="button-light"
-                                    onClick={() => {
-                                        sessionStorage.setItem('form_data', '');
-                                    }}
-                                >
-                                    Confirm
-                                </button>
-                            )}
 
-                            {step != 4 && (
-                                <button ref={next_button} className="button-dark">
-                                    Next Step
-                                </button>
-                            )}
-
-                            {step != 1 && (
-                                <button
-                                    className="button-white"
-                                    type="button"
-                                    onClick={(event) => {
-                                        event.preventDefault();
-                                        setStep(step - 1);
-                                    }}
-                                >
-                                    Go Back
-                                </button>
-                            )}
-                        </div>
-                    )}
+                        {step === 1 && (
+                            <Form_1
+                                name={form_data.name}
+                                email={form_data.email}
+                                phone_number={form_data.phone_number}
+                                onChange={setForm1}
+                            />
+                        )}
+                        {step === 2 && (
+                            <Form_2
+                                selected_plan={form_data.plan}
+                                billing={form_data.billing}
+                                onChange={setForm2}
+                            />
+                        )}
+                        {step === 3 && (
+                            <Form_3
+                                billing={form_data.billing}
+                                onChange={setForm3}
+                                addones_value={form_data.addones}
+                            />
+                        )}
+                        {step === 4 && (
+                            <Form_4
+                                billing={form_data.billing}
+                                selected_plan={form_data.plan}
+                                addones_value={form_data.addones}
+                                onClick={goToStep2}
+                            />
+                        )}
+                    </div>
                 </div>
+
+                {step !== 5 && (
+                    <div className="form__buttons">
+                        {step === 4 ? (
+                            <button
+                                ref={confirm_button}
+                                className="button-light"
+                                onClick={() => {
+                                    sessionStorage.setItem('form_data', '');
+                                }}
+                            >
+                                Confirm
+                            </button>
+                        ) : (
+                            <button ref={next_button} className="button-dark">
+                                Next Step
+                            </button>
+                        )}
+
+                        {step !== 1 && (
+                            <button
+                                className="button-white"
+                                type="button"
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    setStep(step - 1);
+                                }}
+                            >
+                                Go Back
+                            </button>
+                        )}
+                    </div>
+                )}
             </form>
         </>
     );
@@ -238,80 +263,72 @@ function Form_1({
         phone_number: 'valid',
     });
     return (
-        <div className="stack-400">
-            <div className="stack-200">
-                <h1>Personal info</h1>
-                <p className="form_description">
-                    Please provide your name, email address, and phone number.
-                </p>
+        <div className="stack-300">
+            <div className="input-box">
+                <label htmlFor="name">Name</label>
+                <span className="validation-message"></span>
+                <input
+                    id="name"
+                    type="text"
+                    name="full-name"
+                    value={name}
+                    className="input--text"
+                    placeholder="e.g. Stephen King"
+                    autoComplete="name"
+                    data-invalid-type={validity.name}
+                    onChange={(event) => {
+                        onChange('name', event.target.value);
+                    }}
+                    required
+                />
             </div>
-            <div className="stack-300">
-                <div className="control-box">
-                    <label htmlFor="name">Name</label>
-                    <span className="validation-message"></span>
-                    <input
-                        id="name"
-                        type="text"
-                        name="full-name"
-                        value={name}
-                        className="input--text"
-                        placeholder="e.g. Stephen King"
-                        autoComplete="name"
-                        data-invalid-type={validity.name}
-                        onChange={(event) => {
-                            onChange('name', event.target.value);
-                        }}
-                        required
-                    />
-                </div>
-                <div className="control-box">
-                    <label htmlFor="email-address">Email Address</label>
-                    <span className="validation-message"></span>
-                    <input
-                        id="email-address"
-                        type="email"
-                        name="email"
-                        value={email}
-                        className="input--text"
-                        placeholder="e.g. stephenking@lorem.com"
-                        data-invalid-type={validity.email}
-                        onChange={(event) => {
-                            if (!event.target.checkValidity()) {
-                                setValidity({
-                                    ...validity,
-                                    email: event.target.validity.typeMismatch
-                                        ? 'typemissmatch'
-                                        : 'failed',
-                                });
-                            } else {
-                                setValidity({
-                                    ...validity,
-                                    email: 'valid',
-                                });
-                            }
-                            onChange('email', event.target.value);
-                        }}
-                        required
-                    />
-                </div>
-                <div className="control-box">
-                    <label htmlFor="phone-number">Phone Number</label>
-                    <span className="validation-message"></span>
-                    <input
-                        id="phone-number"
-                        type="tel"
-                        name="phone_number"
-                        className="input--text"
-                        value={phone_number}
-                        placeholder="e.g. +1 234 567 890"
-                        autoComplete="tel"
-                        data-invalid-type={validity.phone_number}
-                        onChange={(event) => {
-                            onChange('phone_number', event.target.value);
-                        }}
-                        required
-                    />
-                </div>
+            <div className="input-box">
+                <label htmlFor="email-address">Email Address</label>
+                <span className="validation-message"></span>
+                <input
+                    id="email-address"
+                    type="email"
+                    name="email"
+                    value={email}
+                    className="input--text"
+                    placeholder="e.g. stephenking@lorem.com"
+                    data-invalid-type={validity.email}
+                    onChange={(event) => {
+                        if (!event.target.checkValidity()) {
+                            setValidity({
+                                ...validity,
+                                email: event.target.validity.typeMismatch
+                                    ? 'typemissmatch'
+                                    : 'failed',
+                            });
+                        } else {
+                            setValidity({
+                                ...validity,
+                                email: 'valid',
+                            });
+                        }
+                        onChange('email', event.target.value);
+                    }}
+                    required
+                />
+            </div>
+            <div className="input-box">
+                <label htmlFor="phone-number">Phone Number</label>
+                <span className="validation-message"></span>
+                <input
+                    id="phone-number"
+                    type="tel"
+                    name="phone_number"
+                    className="input--text"
+                    value={phone_number}
+                    placeholder="e.g. +1 234 567 890"
+                    autoComplete="tel"
+                    data-invalid-type={validity.phone_number}
+                    onChange={(event) => {
+                        onChange('phone_number', event.target.value);
+                    }}
+                    required
+                />
             </div>
         </div>
     );
@@ -328,14 +345,8 @@ function Form_2({
 }) {
     const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
     return (
-        <div className="stack-400">
-            <div className="stack-200">
-                <h1>Select your plan</h1>
-                <p className="form_description">
-                    You have the option of monthly or yearly billing.
-                </p>
-            </div>
-            <div className="flex-300">
+        <>
+            <div className="radio-group">
                 {plans.map((plan, i) => {
                     return (
                         <div key={plan.title} className="radio-box">
@@ -409,7 +420,7 @@ function Form_2({
                     Yearly
                 </label>
             </div>
-        </div>
+        </>
     );
 }
 
@@ -424,37 +435,28 @@ function Form_3({
 }) {
     const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
     return (
-        <div className="stack-400">
-            <div className="stack-200">
-                <h1>Pick add-ones</h1>
-                <p className="form_description">Add-ones help enhance your gaming experience.</p>
-            </div>
-            <div className="stack-300">
-                {addones.map((addone, i) => {
-                    return (
-                        <div key={addone.title} className="checkbox">
-                            <input
-                                id={`checkbox-${i}`}
-                                name="add-ones"
-                                value={addone.title}
-                                type="checkbox"
-                                checked={addones_value[addone.title]}
-                                onChange={(event) => {
-                                    onChange(
-                                        event.target.value as addonesType,
-                                        event.target.checked,
-                                    );
-                                }}
-                            />
-                            <label htmlFor={`checkbox-${i}`}>
-                                <span className="heading-primary">{addone.title}</span>
-                                <span className="heading-thirdnary">{`+${addone.price[billing]}${price_postfix}`}</span>
-                                <span className="heading-secondary">{addone.description}</span>
-                            </label>
-                        </div>
-                    );
-                })}
-            </div>
+        <div className="stack-300">
+            {addones.map((addone, i) => {
+                return (
+                    <div key={addone.title} className="checkbox">
+                        <input
+                            id={`checkbox-${i}`}
+                            name="add-ones"
+                            value={addone.title}
+                            type="checkbox"
+                            checked={addones_value[addone.title]}
+                            onChange={(event) => {
+                                onChange(event.target.value as addonesType, event.target.checked);
+                            }}
+                        />
+                        <label htmlFor={`checkbox-${i}`}>
+                            <span className="heading-primary">{addone.title}</span>
+                            <span className="heading-thirdnary">{`+${addone.price[billing]}${price_postfix}`}</span>
+                            <span className="heading-secondary">{addone.description}</span>
+                        </label>
+                    </div>
+                );
+            })}
         </div>
     );
 }
@@ -481,13 +483,7 @@ function Form_4({
         }
     });
     return (
-        <div className="stack-400">
-            <div className="stack-200">
-                <h1>Finishing up</h1>
-                <p className="form_description">
-                    Double-check everything looks OK before confirming.
-                </p>
-            </div>
+        <>
             <ul className="order-list">
                 <li>
                     <span className="heading-primary">{`${selected_plan} (${billing})`}</span>
@@ -516,6 +512,6 @@ function Form_4({
                 <span className="heading-secondary">{`Total (per ${billing.slice(0, -2)})`}</span>
                 <span className="heading-thirdnary">{`+${total_cost}${price_postfix}`}</span>
             </div>
-        </div>
+        </>
     );
 }

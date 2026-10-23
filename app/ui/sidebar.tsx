@@ -23,7 +23,7 @@ function Step({
 export default function Sidebar({ active_step }: { active_step: number }) {
     const steps = ['Your Info', 'Select Plan', 'Add-Ones', 'Summary'];
     return (
-        <ol className="form-sidebar stack-400">
+        <ol className="form-sidebar">
             {steps.map((step, i) => {
                 return (
                     <Step step={i + 1} key={i + 1} isActive={i+1 == active_step}>
