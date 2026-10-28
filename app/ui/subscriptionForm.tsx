@@ -3,92 +3,11 @@ import Image from 'next/image';
 
 import { useRef, useState, useEffect } from 'react';
 import Sidebar from '@/app/ui/sidebar';
+import formInfo from '@/app/data/formInfo';
 
-const form_info = [
-    {
-        title: 'Personal info',
-        description: 'Please provide your name, email address, and phone number.',
-    },
-    {
-        title: 'Select your plan',
-        description: 'You have the option of monthly or yearly billing.',
-    },
-    {
-        title: 'Pick add-ones',
-        description: 'Add-ones help enhance your gaming experience.',
-    },
-    {
-        title: 'Finishing up',
-        description: 'Double-check everything looks OK before confirming.',
-    },
-    {
-        title: 'Thank you!',
-        description:
-            'Thanks for confirming your subscription! We hope you have fun using our platform.',
-    },
-];
-const plans = [
-    {
-        title: 'arcade',
-        price: {
-            monthly: 9,
-            yearly: 90,
-        },
-    },
-    {
-        title: 'advanced',
-        price: {
-            monthly: 12,
-            yearly: 120,
-        },
-    },
-    {
-        title: 'pro',
-        price: {
-            monthly: 15,
-            yearly: 150,
-        },
-    },
-] as const;
-const addones = [
-    {
-        title: 'online service',
-        description: 'Access to multiplayer games',
-        price: {
-            monthly: 1,
-            yearly: 10,
-        },
-    },
-    {
-        title: 'larger storage',
-        description: 'Extra 1TB of cloud save',
-        price: {
-            monthly: 2,
-            yearly: 20,
-        },
-    },
-    {
-        title: 'customizable profile',
-        description: 'Custom theme on your profile',
-        price: {
-            monthly: 2,
-            yearly: 20,
-        },
-    },
-] as const;
-
-const initial_form_value: formDataType = {
-    name: '',
-    email: '',
-    phone_number: '',
-    plan: 'arcade',
-    billing: 'monthly',
-    addones: {
-        [addones[0].title]: true,
-        [addones[1].title]: true,
-        [addones[2].title]: false,
-    },
-};
+const form_steps = formInfo.steps;
+const plans = formInfo.plans;
+const addones = formInfo.addones;
 
 type billingType = 'yearly' | 'monthly';
 type planType = (typeof plans)[number]['title'];
@@ -104,6 +23,19 @@ interface formDataType {
     billing: billingType;
     addones: addonesFormType;
 }
+
+const initial_form_value: formDataType = {
+    name: '',
+    email: '',
+    phone_number: '',
+    plan: plans[0].title,
+    billing: 'monthly',
+    addones: {
+        [addones[0].title]: true,
+        [addones[1].title]: true,
+        [addones[2].title]: false,
+    },
+};
 
 export default function SubscriptionForm() {
     const [step, setStep] = useState(1);
@@ -123,8 +55,8 @@ export default function SubscriptionForm() {
         setData({ ...form_data, addones: { ...form_data.addones, [data_name]: data_value } });
     }
 
-    function goToStep2() {
-        setStep(2);
+    function goToStep(step_num:number) {
+        setStep(step_num);
     }
 
     useEffect(() => {
@@ -137,7 +69,12 @@ export default function SubscriptionForm() {
         }
         // if the session value exists and the form is on the initial state, set the form value
         else if (session_form) {
-            setData(JSON.parse(session_form));
+            try{
+                setData(JSON.parse(session_form));
+            }
+            catch(error){
+                console.error(error)
+            }
         }
     }, [form_data]);
 
@@ -160,21 +97,21 @@ export default function SubscriptionForm() {
                     console.log(event.type);
                 }}
             >
-                <Sidebar active_step={step} />
+                <Sidebar steps={formInfo.steps.slice(0, -1).map((step)=> step.sidebar_title)} active_step={step} stepChange={goToStep}/>
                 <div className="form__main">
-                    <div className={step === 5 ? "thanks-page":"stack-400"}>
-                            {step === 5 && (
-                                <Image
-                                    className="icon_big"
-                                    src={`/icon-thank-you.svg`}
-                                    height={80}
-                                    width={80}
-                                    alt=""
-                                />
-                            )}
+                    <div className={step === 5 ? 'thanks-page' : 'stack-400'}>
+                        {step === 5 && (
+                            <Image
+                                className="icon_big"
+                                src={`/icon-thank-you.svg`}
+                                height={80}
+                                width={80}
+                                alt=""
+                            />
+                        )}
                         <div className="stack-200">
-                            <h1>{form_info[step - 1].title}</h1>
-                            <p className="form_description">{form_info[step - 1].description}</p>
+                            <h1>{form_steps[step - 1].title}</h1>
+                            <p className="form__description">{form_steps[step - 1].description}</p>
                         </div>
 
                         {step === 1 && (
@@ -204,7 +141,6 @@ export default function SubscriptionForm() {
                                 billing={form_data.billing}
                                 selected_plan={form_data.plan}
                                 addones_value={form_data.addones}
-                                onClick={goToStep2}
                             />
                         )}
                     </div>
@@ -213,21 +149,18 @@ export default function SubscriptionForm() {
                 {step !== 5 && (
                     <div className="form__buttons">
                         {step === 4 ? (
-                            <button
-                                ref={confirm_button}
-                                className="button-light"
-                            >
+                            <button ref={confirm_button} className="button button--light">
                                 Confirm
                             </button>
                         ) : (
-                            <button ref={next_button} className="button-dark">
+                            <button ref={next_button} className="button button--dark">
                                 Next Step
                             </button>
                         )}
 
                         {step !== 1 && (
                             <button
-                                className="button-white"
+                                className="button button--white"
                                 type="button"
                                 onClick={(event) => {
                                     event.preventDefault();
@@ -385,7 +318,7 @@ function Form_2({
                                 onChange('billing', 'monthly');
                             }
                         }}
-                    ></div>
+                    />
                     <input
                         type="radio"
                         name="billing"
@@ -463,12 +396,10 @@ function Form_4({
     selected_plan,
     addones_value,
     billing,
-    onClick,
 }: {
     selected_plan: planType;
     addones_value: addonesFormType;
     billing: billingType;
-    onClick: () => void;
 }) {
     const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
     const selected_plan_price = plans.find((plan) => plan.title === selected_plan)?.price[
@@ -486,14 +417,6 @@ function Form_4({
                 <li>
                     <span className="heading-primary">{`${selected_plan} (${billing})`}</span>
                     <span className="heading-primary">{`${selected_plan_price}${price_postfix}`}</span>
-                    <button
-                        className="button-text"
-                        onClick={() => {
-                            onClick();
-                        }}
-                    >
-                        Change
-                    </button>
                 </li>
                 {addones.map((addone) => {
                     if (addones_value[addone.title]) {

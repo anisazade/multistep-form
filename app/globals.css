@@ -19,6 +19,7 @@
     --space-400: clamp( 1.2rem, 1.7vw, 2.2rem);
     --space-500: clamp( 2rem, 2.5vw, 5rem);
 
+    --font-size-200: clamp(0.75rem, 0.7rem + 0.167vw, 0.875rem);
     --font-size-300: clamp(0.875rem, 0.8rem + 0.25vw, 1rem);
     --font-size-500: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
     --font-size-600: clamp(1.5rem, 1.25rem + 1vw, 2rem);
@@ -54,13 +55,4 @@ h1, h2, h3{
 
 h1{
     font-size: var(--font-size-600) ;
-}
-
-button{
-    border: none;
-    border-radius: .5rem;
-    padding: 1em 1.5em;
-    cursor: pointer;
-    transition: .1s;
-    font-weight: 500;
 }

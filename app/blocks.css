@@ -14,7 +14,7 @@ form {
     min-height: 70vh;
 }
 
-.form_description {
+.form__description {
     color: var(--color-grey-500);
 }
 
@@ -282,25 +282,38 @@ form {
     align-self: stretch;
 }
 
-.form-sidebar {
+.form__sidebar {
+    display: flex;
+    flex-direction: column;
     padding: min(2.5em, 10vw);
     padding-inline-end: min(6em, 10vw);
     background-image: url(/bg-sidebar-desktop.svg);
     background-size: cover;
     background-position: bottom left;
-    color: var(--color-white);
     border-radius: 0.5rem;
-    text-transform: uppercase;
     list-style: none;
-    display: flex;
-    flex-direction: column;
     gap: var(--space-400);
     grid-row: 1 / span 2;
-
-    .step {
-        display: flex;
+    
+    .step__button {
+        display: block flex;
         align-items: center;
         gap: 1em;
+        background-color: transparent;
+        border: none;
+        color: var(--color-white);
+        text-transform: uppercase;
+        cursor: pointer;
+        text-align: inherit;
+        line-height: inherit;
+        width: 100%;
+        &:focus-visible{
+            outline: 2px solid hsl(243, 100%, 77%);
+            outline-offset: 7px;
+        }
+        &:disabled{
+            cursor: default;
+        }
     }
 
     .step__marker {
@@ -334,10 +347,11 @@ form {
         display: flex;
         flex-direction: column;
         white-space: nowrap;
+        flex-grow: 1;
 
         & > span:nth-child(1) {
             color: var(--color-grey-500);
-            font-size: var(--font-size-300);
+            font-size: var(--font-size-200);
         }
 
         & > span:nth-child(2) {
@@ -347,12 +361,21 @@ form {
 
 }
 
-.button-dark {
+.button{
+    border: none;
+    border-radius: .5rem;
+    padding: 1em 1.5em;
+    cursor: pointer;
+    transition: opacity .1s;
+    font-weight: 500;
+}
+
+.button--dark {
     background-color: var(--color-blue-950);
     color: var(--color-white);
 
     &:active {
-        background-color: var(--color-blue-800);
+        opacity: .85;
     }
 
     &:focus-visible {
@@ -360,29 +383,26 @@ form {
     }
 }
 
-.button-white {
+.button--white {
     background-color: var(---color-white);
     color: var(--color-grey-500);
-
+    
     &:active {
         color: var(--color-blue-950);
     }
 }
 
-.button-light {
+.button--light {
     background-color: var(--color-purple-600);
     color: var(--color-white);
-}
 
-.button-text {
-    background-color: transparent;
-    padding: 0;
-    text-decoration: underline;
-    font-size: var(--font-size-300);
-    color: var(--color-grey-500);
-    text-decoration-thickness: 2px;
-    &:active {
-        color: var(--color-purple-600);
+    &:active{
+        opacity: .85;
+    }
+    
+    &:focus-visible {
+        outline-offset: 3px;
+        outline-color: var(--color-purple-600);
     }
 }
 
