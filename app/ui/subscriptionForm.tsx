@@ -131,12 +131,12 @@ export default function SubscriptionForm() {
         const session_form = sessionStorage.getItem('form_data');
         const form_data_str = JSON.stringify(form_data);
 
-        // set session value if form value is updated by user
+        // set session value if form data is updated by user
         if (form_data !== initial_form_value) {
             sessionStorage.setItem('form_data', form_data_str);
         }
         // if the session value exists and the form is on the initial state, set the form value
-        else if (session_form !== null && session_form !== '') {
+        else if (session_form) {
             setData(JSON.parse(session_form));
         }
     }, [form_data]);
@@ -155,6 +155,7 @@ export default function SubscriptionForm() {
                     } else if (event.nativeEvent.submitter === confirm_button.current) {
                         setStep(5);
                         setData(initial_form_value);
+                        sessionStorage.setItem('form_data', '');
                     }
                     console.log(event.type);
                 }}
@@ -215,9 +216,6 @@ export default function SubscriptionForm() {
                             <button
                                 ref={confirm_button}
                                 className="button-light"
-                                onClick={() => {
-                                    sessionStorage.setItem('form_data', '');
-                                }}
                             >
                                 Confirm
                             </button>

@@ -4,13 +4,15 @@ function Step({
     step,
     children,
     isActive,
+    isPassed,
 }: {
     step: number;
     children: React.ReactNode;
     isActive: boolean;
+    isPassed: boolean;
 }) {
     return (
-        <li className={`step ${isActive && 'active'}`}>
+        <li className="step" data-state={isActive ? 'active' : isPassed ? 'passed' : 'upcoming'}>
             <span className="step__marker">{step}</span>
             <div className="step__heading">
                 <span>step {step}</span>
@@ -24,10 +26,15 @@ export default function Sidebar({ active_step }: { active_step: number }) {
     const steps = ['Your Info', 'Select Plan', 'Add-Ones', 'Summary'];
     return (
         <ol className="form-sidebar">
-            {steps.map((step, i) => {
+            {steps.map((step_name, i) => {
                 return (
-                    <Step step={i + 1} key={i + 1} isActive={i+1 == active_step}>
-                        {step}{' '}
+                    <Step
+                        step={i + 1}
+                        key={i + 1}
+                        isPassed={i + 1 < active_step}
+                        isActive={i + 1 == active_step}
+                    >
+                        {step_name}{' '}
                     </Step>
                 );
             })}

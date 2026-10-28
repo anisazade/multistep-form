@@ -314,6 +314,22 @@ form {
         font-weight: 500;
     }
 
+    .step[data-state="active"]{
+        .step__marker{
+            background-color: var(--color-blue-200);
+            color: var(--color-blue-950);
+            border-color: var(--color-blue-200);
+        }
+    }
+
+    .step[data-state="passed"]{
+        .step__marker{
+            background-color: hsl(243, 100%, 77%);
+            color: var(--color-blue-950);
+            border-color: hsl(243, 100%, 77%);
+        }
+    }
+
     .step__heading {
         display: flex;
         flex-direction: column;
@@ -329,13 +345,6 @@ form {
         }
     }
 
-    .step.active {
-        .step__marker {
-            background-color: var(--color-blue-200);
-            color: var(--color-blue-950);
-            border-color: var(--color-blue-300);
-        }
-    }
 }
 
 .button-dark {
