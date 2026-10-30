@@ -2,24 +2,26 @@
 
 function Step({
     step,
-    children,
+    step_name,
     isActive,
     isPassed,
+    isDisabled,
     onClick,
 }: {
     step: number;
-    children: React.ReactNode;
+    step_name: string;
     isActive: boolean;
     isPassed: boolean;
+    isDisabled: boolean;
     onClick: () => void;
 }) {
     return (
         <li className="step" data-state={isActive ? 'active' : isPassed ? 'passed' : 'upcoming'}>
-            <button className="step__button" onClick={onClick} disabled={!isPassed}>
+            <button className="step__button" aria-current={isActive ? "step" : undefined} aria-label={`Step ${step}: ${step_name} ${isPassed && ", completed"}`} onClick={onClick} disabled={isDisabled} type="button">
                 <span className="step__marker">{step}</span>
                 <div className="step__heading">
                     <span>step {step}</span>
-                    <span>{children}</span>
+                    <span>{step_name}</span>
                 </div>
             </button>
         </li>
@@ -28,21 +30,23 @@ function Step({
 
 export default function Sidebar({ active_step, stepChange, steps }: { active_step: number, stepChange:(step_num: number) => void, steps:Array<string> }) {
     return (
-        <ol className="form__sidebar">
-            {steps.map((step_name, i) => {
-                const step_num = i+1;
-                return (
-                    <Step
-                        step={step_num}
-                        key={step_num}
-                        isPassed={step_num < active_step}
-                        isActive={step_num == active_step}
-                        onClick={()=>stepChange(step_num)}
-                    >
-                        {step_name}{' '}
-                    </Step>
-                );
-            })}
-        </ol>
+        <nav aria-label="Subscription form steps" className="form__sidebar">
+            <ol>
+                {steps.map((step_name, i) => {
+                    const step_num = i+1;
+                    return (
+                        <Step
+                            step={step_num}
+                            step_name={step_name}
+                            key={step_num}
+                            isPassed={step_num < active_step}
+                            isActive={step_num == active_step}
+                            onClick={()=>stepChange(step_num)}
+                            isDisabled= {active_step === 5 || step_num > active_step}
+                        />
+                    );
+                })}
+            </ol>
+        </nav>
     );
 }

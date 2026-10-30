@@ -88,7 +88,7 @@ export default function SubscriptionForm() {
                         event.currentTarget.checkValidity() &&
                         event.nativeEvent.submitter === next_button.current
                     ) {
-                        setStep(step + 1);
+                        setStep((step)=>step + 1);
                     } else if (event.nativeEvent.submitter === confirm_button.current) {
                         setStep(5);
                         setData(initial_form_value);

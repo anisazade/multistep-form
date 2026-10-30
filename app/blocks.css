@@ -94,7 +94,7 @@ form {
         position: absolute;
         inset: 0;
         z-index: 0;
-        transition: 0.2s;
+        transition: border 0.2s;
         &:hover {
             border-color: var(--color-purple-600);
         }
@@ -283,20 +283,22 @@ form {
 }
 
 .form__sidebar {
-    display: flex;
-    flex-direction: column;
-    padding: min(2.5em, 10vw);
-    padding-inline-end: min(6em, 10vw);
+    grid-row: 1 / span 2;
     background-image: url(/bg-sidebar-desktop.svg);
     background-size: cover;
     background-position: bottom left;
+    padding: min(2.5em, 10vw);
     border-radius: 0.5rem;
-    list-style: none;
-    gap: var(--space-400);
-    grid-row: 1 / span 2;
+    padding-inline-end: min(6em, 10vw);
+    ol{
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+        gap: var(--space-400);
+    }
     
     .step__button {
-        display: block flex;
+        display: flex;
         align-items: center;
         gap: 1em;
         background-color: transparent;
@@ -340,6 +342,13 @@ form {
             background-color: hsl(243, 100%, 77%);
             color: var(--color-blue-950);
             border-color: hsl(243, 100%, 77%);
+        }
+        .step__button:not(:disabled){            
+            opacity: .8;
+            transition: opacity .1s;
+            &:hover{
+                opacity: 1;
+            }
         }
     }
 
@@ -434,13 +443,16 @@ form {
         margin-block-start: auto;
     }
 
-    .form-sidebar {
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
+    .form__sidebar {
         border-radius: 0px;
         padding-block: 3rem 10rem;
         background-image: url(/bg-sidebar-mobile.svg);
+        
+        ol{
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;            
+        }
 
         .step__heading {
             display: none;
