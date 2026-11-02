@@ -1,11 +1,12 @@
 'use client';
 import Image from 'next/image';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '@/app/ui/sidebar';
 import formInfo from '@/app/data/formInfo';
 
 const form_steps = formInfo.steps;
+const total_steps = form_steps.length;
 const plans = formInfo.plans;
 const addones = formInfo.addones;
 
@@ -39,25 +40,61 @@ const initial_form_value: formDataType = {
 
 export default function SubscriptionForm() {
     const [step, setStep] = useState(1);
-    const next_button = useRef(null);
-    const confirm_button = useRef(null);
     const [form_data, setData] = useState<formDataType>(initial_form_value);
+    const [field_interacted, setInteracted] = useState({
+        name: false,
+        email: false,
+        phone_number: false,
+    });
 
-    function setForm1(data_name: 'name' | 'email' | 'phone_number', data_value: string) {
+    function setFormField(
+        data_name: 'name' | 'email' | 'phone_number' | 'plan' | 'billing',
+        data_value: string | planType | billingType,
+    ) {
         setData({ ...form_data, [data_name]: data_value });
     }
 
-    function setForm2(data_name: 'plan' | 'billing', data_value: planType | billingType) {
-        setData({ ...form_data, [data_name]: data_value });
-    }
-
-    function setForm3(data_name: addonesType, data_value: boolean) {
+    function setAddon(data_name: addonesType, data_value: boolean) {
         setData({ ...form_data, addones: { ...form_data.addones, [data_name]: data_value } });
     }
 
-    function goToStep(step_num:number) {
+    function goToStep(step_num: number) {
         setStep(step_num);
     }
+
+    function handleFiledBlur(field: 'name' | 'email' | 'phone_number') {
+        setInteracted((prev) => ({ ...prev, [field]: true }));
+    }
+
+    const getFieldErrors = () => {
+        const errors: { name?: string; email?: string; phone_number?: string } = {};
+
+        //Name check
+        const name = form_data.name.trim();
+        if (!name) {
+            errors.name = 'This field cannot be empty';
+        }
+
+        // Email check
+        const email = form_data.email.trim();
+        if (!email) {
+            errors.email = 'This field cannot be empty';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errors.email = 'The entered email is invalid';
+        }
+
+        // Phone check
+        const phoneDigits = form_data.phone_number.replace(/\D/g, '');
+        if (!form_data.phone_number.trim()) {
+            errors.phone_number = 'This field cannot be empty';
+        } else if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+            errors.phone_number = 'Invalid phone number';
+        }
+
+        return errors;
+    };
+
+    const field_errors = getFieldErrors();
 
     useEffect(() => {
         const session_form = sessionStorage.getItem('form_data');
@@ -69,11 +106,10 @@ export default function SubscriptionForm() {
         }
         // if the session value exists and the form is on the initial state, set the form value
         else if (session_form) {
-            try{
+            try {
                 setData(JSON.parse(session_form));
-            }
-            catch(error){
-                console.error(error)
+            } catch (error) {
+                console.error(error);
             }
         }
     }, [form_data]);
@@ -84,20 +120,27 @@ export default function SubscriptionForm() {
                 noValidate
                 onSubmit={(event) => {
                     event.preventDefault();
-                    if (
-                        event.currentTarget.checkValidity() &&
-                        event.nativeEvent.submitter === next_button.current
-                    ) {
-                        setStep((step)=>step + 1);
-                    } else if (event.nativeEvent.submitter === confirm_button.current) {
-                        setStep(5);
+                    if (step === 1) {
+                        setInteracted({ name: true, email: true, phone_number: true });
+                        if (Object.keys(field_errors).length > 0) {
+                            const firstFieldId = Object.keys(field_errors)[0];
+                            document.getElementById(firstFieldId)?.focus();
+                            return;
+                        }
+                    }
+                    setStep((prev_step) => prev_step + 1);
+                    if (step === total_steps - 1) {
                         setData(initial_form_value);
                         sessionStorage.setItem('form_data', '');
                     }
-                    console.log(event.type);
                 }}
             >
-                <Sidebar steps={formInfo.steps.slice(0, -1).map((step)=> step.sidebar_title)} active_step={step} stepChange={goToStep}/>
+                <Sidebar
+                    steps={formInfo.steps.slice(0, -1).map((step) => step.sidebar_title)}
+                    active_step={step}
+                    stepChange={goToStep}
+                />
+
                 <div className="form__main">
                     <div className={step === 5 ? 'thanks-page' : 'stack-400'}>
                         {step === 5 && (
@@ -110,7 +153,7 @@ export default function SubscriptionForm() {
                             />
                         )}
                         <div className="stack-200">
-                            <h1>{form_steps[step - 1].title}</h1>
+                            <h2 className="form__heading">{form_steps[step - 1].title}</h2>
                             <p className="form__description">{form_steps[step - 1].description}</p>
                         </div>
 
@@ -119,20 +162,23 @@ export default function SubscriptionForm() {
                                 name={form_data.name}
                                 email={form_data.email}
                                 phone_number={form_data.phone_number}
-                                onChange={setForm1}
+                                errors={field_errors}
+                                interacted={field_interacted}
+                                onBlur={handleFiledBlur}
+                                onChange={setFormField}
                             />
                         )}
                         {step === 2 && (
                             <Form_2
                                 selected_plan={form_data.plan}
                                 billing={form_data.billing}
-                                onChange={setForm2}
+                                onChange={setFormField}
                             />
                         )}
                         {step === 3 && (
                             <Form_3
                                 billing={form_data.billing}
-                                onChange={setForm3}
+                                onChange={setAddon}
                                 addones_value={form_data.addones}
                             />
                         )}
@@ -149,13 +195,9 @@ export default function SubscriptionForm() {
                 {step !== 5 && (
                     <div className="form__buttons">
                         {step === 4 ? (
-                            <button ref={confirm_button} className="button button--light">
-                                Confirm
-                            </button>
+                            <button className="button button--light">Confirm</button>
                         ) : (
-                            <button ref={next_button} className="button button--dark">
-                                Next Step
-                            </button>
+                            <button className="button button--dark">Next Step</button>
                         )}
 
                         {step !== 1 && (
@@ -181,23 +223,28 @@ function Form_1({
     name,
     email,
     phone_number,
+    errors,
+    interacted,
+    onBlur,
     onChange,
 }: {
     name: string;
     email: string;
     phone_number: string;
+    errors: { name?: string; email?: string; phone_number?: string };
+    interacted: { name: boolean; email: boolean; phone_number: boolean };
+    onBlur: (field: 'name' | 'email' | 'phone_number') => void;
     onChange: (data_name: 'name' | 'email' | 'phone_number', data_value: string) => void;
 }) {
-    const [validity, setValidity] = useState({
-        name: 'valid',
-        email: 'valid',
-        phone_number: 'valid',
-    });
     return (
         <div className="stack-300">
             <div className="input-box">
                 <label htmlFor="name">Name</label>
-                <span className="validation-message"></span>
+                {interacted.name && errors.name && (
+                    <span id="name-error" className="validation-message" role="alert">
+                        {errors.name}
+                    </span>
+                )}
                 <input
                     id="name"
                     type="text"
@@ -206,58 +253,59 @@ function Form_1({
                     className="input--text"
                     placeholder="e.g. Stephen King"
                     autoComplete="name"
-                    data-invalid-type={validity.name}
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "name-error" : undefined}
                     onChange={(event) => {
                         onChange('name', event.target.value);
                     }}
+                    onBlur={() => onBlur('name')}
                     required
                 />
             </div>
             <div className="input-box">
                 <label htmlFor="email-address">Email Address</label>
-                <span className="validation-message"></span>
+                {interacted.email && errors.email && (
+                    <span id="email-error" className="validation-message" role="alert">
+                        {errors.email}
+                    </span>
+                )}
                 <input
-                    id="email-address"
+                    id="email"
                     type="email"
                     name="email"
                     value={email}
                     className="input--text"
                     placeholder="e.g. stephenking@lorem.com"
-                    data-invalid-type={validity.email}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                     onChange={(event) => {
-                        if (!event.target.checkValidity()) {
-                            setValidity({
-                                ...validity,
-                                email: event.target.validity.typeMismatch
-                                    ? 'typemissmatch'
-                                    : 'failed',
-                            });
-                        } else {
-                            setValidity({
-                                ...validity,
-                                email: 'valid',
-                            });
-                        }
                         onChange('email', event.target.value);
                     }}
+                    onBlur={() => onBlur('email')}
                     required
-                />
+                    />
             </div>
             <div className="input-box">
-                <label htmlFor="phone-number">Phone Number</label>
-                <span className="validation-message"></span>
+                <label id="phone-error" htmlFor="phone_number">Phone Number</label>
+                {interacted.phone_number && errors.phone_number && (
+                    <span className="validation-message" role="alert">
+                        {errors.phone_number}
+                    </span>
+                )}
                 <input
-                    id="phone-number"
+                    id="phone_number"
                     type="tel"
                     name="phone_number"
                     className="input--text"
                     value={phone_number}
                     placeholder="e.g. +1 234 567 890"
+                    aria-invalid={!!errors.phone_number}
                     autoComplete="tel"
-                    data-invalid-type={validity.phone_number}
+                    aria-describedby={errors.phone_number ? "phone-error" : undefined}
                     onChange={(event) => {
                         onChange('phone_number', event.target.value);
                     }}
+                    onBlur={() => onBlur('phone_number')}
                     required
                 />
             </div>
