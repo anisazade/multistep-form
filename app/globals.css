@@ -1,6 +1,6 @@
 :root {
     /* primary */
-    --color-blue-950: lab(17.16% 8.92 -33.01);
+    --color-blue-950: hsl(213, 96%, 18%);
     --color-blue-800:hsl(213, 100%, 24%);
     --color-purple-600: hsl(243, 100%, 62%);
     --color-blue-300: hsl(228, 100%, 84%);
@@ -54,5 +54,5 @@ h1, h2, h3{
 }
 
 h2{
-    font-size: var(--font-size-600) ;
+    font-size: var(--font-size-600);
 }

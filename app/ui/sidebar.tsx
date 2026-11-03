@@ -31,7 +31,7 @@ function Step({
 export default function Sidebar({ active_step, stepChange, steps }: { active_step: number, stepChange:(step_num: number) => void, steps:Array<string> }) {
     return (
         <nav aria-label="Subscription form steps" className="form__sidebar">
-            <ol>
+            <ol role="list">
                 {steps.map((step_name, i) => {
                     const step_num = i+1;
                     return (

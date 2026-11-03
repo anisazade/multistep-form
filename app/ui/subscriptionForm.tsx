@@ -1,20 +1,20 @@
-'use client';
-import Image from 'next/image';
+"use client";
+import Image from "next/image";
 
-import { useState, useEffect } from 'react';
-import Sidebar from '@/app/ui/sidebar';
-import formInfo from '@/app/data/formInfo';
+import { useState, useEffect } from "react";
+import Sidebar from "@/app/ui/sidebar";
+import formInfo from "@/app/data/formInfo";
 
 const form_steps = formInfo.steps;
 const total_steps = form_steps.length;
 const plans = formInfo.plans;
 const addones = formInfo.addones;
 
-type billingType = 'yearly' | 'monthly';
-type planType = (typeof plans)[number]['title'];
-type addonesType = (typeof addones)[number]['title'];
+type billingType = "yearly" | "monthly";
+type planType = (typeof plans)[number]["title"];
+type addonesType = (typeof addones)[number]["title"];
 
-type addonesFormType = Record<(typeof addones)[number]['title'], boolean>;
+type addonesFormType = Record<(typeof addones)[number]["title"], boolean>;
 
 interface formDataType {
     name: string;
@@ -26,11 +26,11 @@ interface formDataType {
 }
 
 const initial_form_value: formDataType = {
-    name: '',
-    email: '',
-    phone_number: '',
+    name: "",
+    email: "",
+    phone_number: "",
     plan: plans[0].title,
-    billing: 'monthly',
+    billing: "monthly",
     addones: {
         [addones[0].title]: true,
         [addones[1].title]: true,
@@ -48,7 +48,7 @@ export default function SubscriptionForm() {
     });
 
     function setFormField(
-        data_name: 'name' | 'email' | 'phone_number' | 'plan' | 'billing',
+        data_name: "name" | "email" | "phone_number" | "plan" | "billing",
         data_value: string | planType | billingType,
     ) {
         setData({ ...form_data, [data_name]: data_value });
@@ -62,33 +62,33 @@ export default function SubscriptionForm() {
         setStep(step_num);
     }
 
-    function handleFiledBlur(field: 'name' | 'email' | 'phone_number') {
+    function handleFiledBlur(field: "name" | "email" | "phone_number") {
         setInteracted((prev) => ({ ...prev, [field]: true }));
     }
 
     const getFieldErrors = () => {
         const errors: { name?: string; email?: string; phone_number?: string } = {};
 
-        //Name check
+        // Name check
         const name = form_data.name.trim();
         if (!name) {
-            errors.name = 'This field cannot be empty';
+            errors.name = "This field cannot be empty";
         }
 
         // Email check
         const email = form_data.email.trim();
         if (!email) {
-            errors.email = 'This field cannot be empty';
+            errors.email = "This field cannot be empty";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            errors.email = 'The entered email is invalid';
+            errors.email = "The entered email is invalid";
         }
 
         // Phone check
-        const phoneDigits = form_data.phone_number.replace(/\D/g, '');
+        const phoneDigits = form_data.phone_number.replace(/\D/g, "");
         if (!form_data.phone_number.trim()) {
-            errors.phone_number = 'This field cannot be empty';
+            errors.phone_number = "This field cannot be empty";
         } else if (phoneDigits.length < 7 || phoneDigits.length > 15) {
-            errors.phone_number = 'Invalid phone number';
+            errors.phone_number = "Invalid phone number";
         }
 
         return errors;
@@ -97,12 +97,12 @@ export default function SubscriptionForm() {
     const field_errors = getFieldErrors();
 
     useEffect(() => {
-        const session_form = sessionStorage.getItem('form_data');
+        const session_form = sessionStorage.getItem("form_data");
         const form_data_str = JSON.stringify(form_data);
 
         // set session value if form data is updated by user
         if (form_data !== initial_form_value) {
-            sessionStorage.setItem('form_data', form_data_str);
+            sessionStorage.setItem("form_data", form_data_str);
         }
         // if the session value exists and the form is on the initial state, set the form value
         else if (session_form) {
@@ -131,7 +131,7 @@ export default function SubscriptionForm() {
                     setStep((prev_step) => prev_step + 1);
                     if (step === total_steps - 1) {
                         setData(initial_form_value);
-                        sessionStorage.setItem('form_data', '');
+                        sessionStorage.setItem("form_data", "");
                     }
                 }}
             >
@@ -142,7 +142,7 @@ export default function SubscriptionForm() {
                 />
 
                 <div className="form__main">
-                    <div className={step === 5 ? 'thanks-page' : 'stack-400'}>
+                    <div className={step === 5 ? "thanks-page" : "stack-400"}>
                         {step === 5 && (
                             <Image
                                 className="icon_big"
@@ -233,8 +233,8 @@ function Form_1({
     phone_number: string;
     errors: { name?: string; email?: string; phone_number?: string };
     interacted: { name: boolean; email: boolean; phone_number: boolean };
-    onBlur: (field: 'name' | 'email' | 'phone_number') => void;
-    onChange: (data_name: 'name' | 'email' | 'phone_number', data_value: string) => void;
+    onBlur: (field: "name" | "email" | "phone_number") => void;
+    onChange: (data_name: "name" | "email" | "phone_number", data_value: string) => void;
 }) {
     return (
         <div className="stack-300">
@@ -256,14 +256,14 @@ function Form_1({
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "name-error" : undefined}
                     onChange={(event) => {
-                        onChange('name', event.target.value);
+                        onChange("name", event.target.value);
                     }}
-                    onBlur={() => onBlur('name')}
+                    onBlur={() => onBlur("name")}
                     required
                 />
             </div>
             <div className="input-box">
-                <label htmlFor="email-address">Email Address</label>
+                <label htmlFor="email">Email Address</label>
                 {interacted.email && errors.email && (
                     <span id="email-error" className="validation-message" role="alert">
                         {errors.email}
@@ -276,19 +276,20 @@ function Form_1({
                     value={email}
                     className="input--text"
                     placeholder="e.g. stephenking@lorem.com"
+                    autoComplete="email"
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? "email-error" : undefined}
                     onChange={(event) => {
-                        onChange('email', event.target.value);
+                        onChange("email", event.target.value);
                     }}
-                    onBlur={() => onBlur('email')}
+                    onBlur={() => onBlur("email")}
                     required
-                    />
+                />
             </div>
             <div className="input-box">
-                <label id="phone-error" htmlFor="phone_number">Phone Number</label>
+                <label htmlFor="phone_number">Phone Number</label>
                 {interacted.phone_number && errors.phone_number && (
-                    <span className="validation-message" role="alert">
+                    <span id="phone-error" className="validation-message" role="alert">
                         {errors.phone_number}
                     </span>
                 )}
@@ -303,9 +304,9 @@ function Form_1({
                     autoComplete="tel"
                     aria-describedby={errors.phone_number ? "phone-error" : undefined}
                     onChange={(event) => {
-                        onChange('phone_number', event.target.value);
+                        onChange("phone_number", event.target.value);
                     }}
-                    onBlur={() => onBlur('phone_number')}
+                    onBlur={() => onBlur("phone_number")}
                     required
                 />
             </div>
@@ -320,9 +321,9 @@ function Form_2({
 }: {
     selected_plan: planType;
     billing: billingType;
-    onChange: (data_name: 'plan' | 'billing', data_value: planType | billingType) => void;
+    onChange: (data_name: "plan" | "billing", data_value: planType | billingType) => void;
 }) {
-    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
+    const price_postfix = `/${billing === "monthly" ? "mo" : "yr"}`;
     return (
         <>
             <div className="radio-group">
@@ -341,7 +342,7 @@ function Form_2({
                                 value={plan.title}
                                 checked={selected_plan === plan.title}
                                 onChange={(event) => {
-                                    onChange('plan', event.target.value as planType);
+                                    onChange("plan", event.target.value as planType);
                                 }}
                                 required
                             />
@@ -352,7 +353,7 @@ function Form_2({
             <div className="switch-box">
                 <label
                     htmlFor="monthly-billing"
-                    data-switch-mode={billing === 'monthly' ? 'on' : 'off'}
+                    data-switch-mode={billing === "monthly" ? "on" : "off"}
                 >
                     Monthly
                 </label>
@@ -360,10 +361,10 @@ function Form_2({
                     <div
                         className="overlay"
                         onClick={() => {
-                            if (billing === 'monthly') {
-                                onChange('billing', 'yearly');
+                            if (billing === "monthly") {
+                                onChange("billing", "yearly");
                             } else {
-                                onChange('billing', 'monthly');
+                                onChange("billing", "monthly");
                             }
                         }}
                     />
@@ -373,9 +374,9 @@ function Form_2({
                         value="monthly"
                         id="monthly-billing"
                         data-switch-mode="left"
-                        checked={billing === 'monthly'}
+                        checked={billing === "monthly"}
                         onChange={(event) => {
-                            onChange('billing', event.target.value as billingType);
+                            onChange("billing", event.target.value as billingType);
                         }}
                         required
                     />
@@ -385,16 +386,16 @@ function Form_2({
                         id="yearly-billing"
                         value="yearly"
                         data-switch-mode="right"
-                        checked={billing === 'yearly'}
+                        checked={billing === "yearly"}
                         onChange={(event) => {
-                            onChange('billing', event.target.value as billingType);
+                            onChange("billing", event.target.value as billingType);
                         }}
                         required
                     />
                 </div>
                 <label
                     htmlFor="yearly-billing"
-                    data-switch-mode={billing === 'yearly' ? 'on' : 'off'}
+                    data-switch-mode={billing === "yearly" ? "on" : "off"}
                 >
                     Yearly
                 </label>
@@ -412,7 +413,7 @@ function Form_3({
     billing: billingType;
     onChange: (prop: addonesType, value: boolean) => void;
 }) {
-    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
+    const price_postfix = `/${billing === "monthly" ? "mo" : "yr"}`;
     return (
         <div className="stack-300">
             {addones.map((addone, i) => {
@@ -449,7 +450,7 @@ function Form_4({
     addones_value: addonesFormType;
     billing: billingType;
 }) {
-    const price_postfix = `/${billing === 'monthly' ? 'mo' : 'yr'}`;
+    const price_postfix = `/${billing === "monthly" ? "mo" : "yr"}`;
     const selected_plan_price = plans.find((plan) => plan.title === selected_plan)?.price[
         billing
     ] as number;
