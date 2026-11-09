@@ -1,6 +1,6 @@
 # Multistep Subscription Form
 <p align="center">
-  <img width="800" alt="Multistep Subscription Form Preview" src="https://github.com/user-attachments/assets/b08daab7-07f3-4798-8a32-216931568c83" />
+    <img width="3464" height="3464" alt="Image" src="https://github.com/user-attachments/assets/e828af62-54f1-439d-a142-109036ed6495" />
 </p>
 
 A responsive multistep subscription form built with Next.js, React, and TypeScript. 
