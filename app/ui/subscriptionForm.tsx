@@ -150,6 +150,7 @@ export default function SubscriptionForm() {
                                 height={80}
                                 width={80}
                                 alt=""
+                                aria-hidden="true"
                             />
                         )}
                         <div className="stack-200">
@@ -330,7 +331,7 @@ function Form_2({
                 {plans.map((plan, i) => {
                     return (
                         <div key={plan.title} className="radio-box">
-                            <Image src={`/icon-${plan.title}.svg`} height={40} width={40} alt="" />
+                            <Image aria-hidden="true" src={`/icon-${plan.title}.svg`} height={40} width={40} alt="" />
                             <label htmlFor={`radio-1${i}`}>
                                 <span className="heading-primary">{plan.title}</span>
                                 <span className="heading-secondary">{`${plan.price[billing]}${price_postfix}`}</span>
