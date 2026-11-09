@@ -281,6 +281,7 @@ form {
 
 .form__sidebar {
     grid-row: 1 / span 2;
+    background-color:#483eff;
     background-image: url(/bg-sidebar-desktop.svg);
     background-size: cover;
     background-position: bottom left;
